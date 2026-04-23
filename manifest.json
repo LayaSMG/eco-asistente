@@ -1,0 +1,27 @@
+{
+  "name": "EcoAsistente IA",
+  "short_name": "EcoAsistente",
+  "description": "Asistente de inteligencia artificial para medio ambiente y sostenibilidad",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#2d4a2d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "lifestyle", "utilities"],
+  "lang": "es",
+  "dir": "ltr"
+}
