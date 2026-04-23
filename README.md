@@ -1,2 +1,2 @@
-# Eco-Asistente-
+# eco-asistente
 Asistente IA de medio ambiente 
