@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EcoAsistente">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="description" content="Asistente IA para medio ambiente y sostenibilidad comunitaria">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -22,8 +21,9 @@
   body { font-family: 'DM Mono', monospace; background: var(--cream); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
   body::before { content: ''; position: fixed; top: -20%; right: -10%; width: 55vw; height: 55vw; background: radial-gradient(ellipse, rgba(90,158,90,0.12) 0%, transparent 70%); border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; animation: morphBlob 18s ease-in-out infinite; z-index: 0; pointer-events: none; }
   body::after { content: ''; position: fixed; bottom: -15%; left: -5%; width: 45vw; height: 45vw; background: radial-gradient(ellipse, rgba(45,74,45,0.09) 0%, transparent 70%); border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%; animation: morphBlob 22s ease-in-out infinite reverse; z-index: 0; pointer-events: none; }
-  @keyframes morphBlob { 0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; transform: translate(0,0) rotate(0deg); } 33% { border-radius: 30% 70% 40% 60% / 70% 30% 70% 30%; transform: translate(2%,2%) rotate(4deg); } 66% { border-radius: 50% 50% 60% 40% / 40% 60% 40% 60%; transform: translate(-1%,1%) rotate(-3deg); } }
+  @keyframes morphBlob { 0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; } 33% { border-radius: 30% 70% 40% 60% / 70% 30% 70% 30%; } 66% { border-radius: 50% 50% 60% 40% / 40% 60% 40% 60%; } }
 
+  /* Setup */
   #setupScreen { position: fixed; inset: 0; z-index: 100; background: var(--cream); display: flex; align-items: center; justify-content: center; padding: 24px; }
   .setup-card { background: white; border: 1.5px solid rgba(45,74,45,0.15); border-radius: 20px; padding: 32px 28px; max-width: 360px; width: 100%; box-shadow: 0 4px 24px rgba(45,74,45,0.08); animation: fadeUp 0.5s ease both; }
   .setup-card .icon { font-size: 2.5rem; margin-bottom: 14px; display: block; }
@@ -44,7 +44,7 @@
   .header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
   .status-dot { display: flex; align-items: center; gap: 6px; font-size: 0.62rem; color: var(--fern); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); animation: pulse 2.5s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
   .reset-key { background: none; border: 1px solid rgba(45,74,45,0.2); color: var(--sage); cursor: pointer; font-size: 0.58rem; font-family: 'DM Mono', monospace; border-radius: 8px; padding: 3px 8px; transition: all 0.2s; }
   .reset-key:hover { border-color: var(--fern); color: var(--fern); }
 
@@ -98,12 +98,12 @@
   <div class="setup-card">
     <span class="icon">🌿</span>
     <h2>Configura EcoAsistente</h2>
-    <p>Ingresa tu clave gratuita de OpenRouter para comenzar. Se guarda solo en tu dispositivo.</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
+    <p>Ingresa tu clave gratuita de Cohere para comenzar. Se guarda solo en tu dispositivo.</p>
+    <input type="password" id="apiKeyInput" placeholder="Pega tu API Key de Cohere..." />
     <button class="setup-btn" onclick="saveApiKey()">Comenzar 🌿</button>
     <p class="setup-note">
-      ¿No tienes clave? Obtenla gratis en<br>
-      <a href="https://openrouter.ai" target="_blank">openrouter.ai</a> → Keys → Create Key
+      Obtén tu clave gratis en<br>
+      <a href="https://dashboard.cohere.com" target="_blank">dashboard.cohere.com</a>
     </p>
   </div>
 </div>
@@ -154,22 +154,22 @@
 <script>
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 
-  let API_KEY = localStorage.getItem('eco_or_key') || '';
+  let API_KEY = localStorage.getItem('eco_cohere_key') || '';
 
   function saveApiKey() {
     const key = document.getElementById('apiKeyInput').value.trim();
-    if (!key || !key.startsWith('sk-or')) {
-      alert('Ingresa una clave válida de OpenRouter (debe empezar con sk-or...)');
+    if (!key || key.length < 20) {
+      alert('Por favor ingresa una API Key válida de Cohere.');
       return;
     }
-    localStorage.setItem('eco_or_key', key);
+    localStorage.setItem('eco_cohere_key', key);
     API_KEY = key;
     document.getElementById('setupScreen').style.display = 'none';
   }
 
   function resetKey() {
     if (confirm('¿Cambiar la clave?')) {
-      localStorage.removeItem('eco_or_key');
+      localStorage.removeItem('eco_cohere_key');
       API_KEY = '';
       document.getElementById('apiKeyInput').value = '';
       document.getElementById('setupScreen').style.display = 'flex';
@@ -183,7 +183,7 @@
   const sendBtn = document.getElementById('sendBtn');
   let history = [];
 
-  const SYSTEM = `Eres EcoAsistente, especializado en medio ambiente, sostenibilidad e impacto ambiental comunitario. Tu rol:
+  const PREAMBLE = `Eres EcoAsistente, especializado en medio ambiente, sostenibilidad e impacto ambiental comunitario. Tu rol:
 1. RESPONDER preguntas sobre ecología, cambio climático, reciclaje, energías renovables, biodiversidad.
 2. RESOLVER PROBLEMAS ambientales de comunidades, especialmente en Bolivia y Latinoamérica.
 3. GUIAR PASO A PASO en proyectos ambientales comunitarios y campañas de concientización.
@@ -234,34 +234,39 @@ Estilo: claro, empático, motivador. Ejemplos locales. Acciones prácticas. Paso
     sendBtn.disabled = true;
 
     appendMessage('user', text);
+
+    // Build Cohere chat history
+    const chatHistory = history.map(m => ({
+      role: m.role === 'user' ? 'USER' : 'CHATBOT',
+      message: m.content
+    }));
+
     history.push({ role: 'user', content: text });
     showTyping();
 
     try {
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const res = await fetch('https://api.cohere.com/v1/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`,
-          'HTTP-Referer': window.location.href,
-          'X-Title': 'EcoAsistente'
+          'Authorization': `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
-          model: 'google/gemma-3-4b-it:free',
-          messages: [
-            { role: 'system', content: SYSTEM },
-            ...history
-          ]
+          model: 'command-r-plus-08-2024',
+          message: text,
+          chat_history: chatHistory,
+          preamble: PREAMBLE,
+          temperature: 0.7
         })
       });
 
       const data = await res.json();
       removeTyping();
 
-      if (data.error) {
-        appendMessage('assistant', '⚠️ Error: ' + data.error.message + '\n\nToca 🔑 clave para verificar tu clave.');
+      if (data.message) {
+        appendMessage('assistant', '⚠️ Error: ' + data.message + '\n\nVerifica tu clave tocando 🔑 arriba.');
       } else {
-        const reply = data.choices?.[0]?.message?.content || 'No pude generar una respuesta. Intenta de nuevo.';
+        const reply = data.text || 'No pude generar una respuesta. Intenta de nuevo.';
         history.push({ role: 'assistant', content: reply });
         appendMessage('assistant', reply);
       }
